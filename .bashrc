@@ -1,4 +1,4 @@
-clear
+python ~/main.pyclear
 
 # صوت ترحيب
 termux-tts-speak "Welcome... Al Hack Asad Al Amri"
