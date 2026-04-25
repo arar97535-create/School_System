@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html dir="rtl" lang="ar">
+<head>
+  <meta charset="UTF-8" />
+  <title>مولد كروت ذكي - ANONYMOUS YEMEN</title>
+  <style>
+    body {
+      background-color: black;
+      color: lime;
+      font-family: monospace;
+      text-align: center;
+      overflow: hidden;
+    }
+
+    input, button, textarea {
+      background-color: black;
+      color: lime;
+      border: 1px solid lime;
+      padding: 8px;
+      margin: 4px;
+      width: 80%;
+    }
+
+    #result {
+      white-space: pre-wrap;
+      margin-top: 10px;
+      border: 1px solid lime;
+      padding: 10px;
+      max-height: 300px;
+      overflow-y: auto;
+      background-color: rgba(0, 0, 0, 0.8);
+    }
+
+    footer {
+      margin-top: 20px;
+      font-size: 0.9em;
+      color: lime;
+    }
+
+    #quote {
+      font-weight: bold;
+      font-size: 1.3em;
+      margin-bottom: 15px;
+      animation: colorChange 3s infinite linear;
+    }
+
+    @keyframes colorChange {
+      0% { color: red; }
+      25% { color: lime; }
+      50% { color: cyan; }
+      75% { color: orange; }
+      100% { color: red; }
+    }
+
+    #eagle-container {
+      border: 3px double lime;
+      padding: 10px;
+      display: inline-block;
+      margin-bottom: 15px;
+      /* أزلت هنا animation: pulse; */
+      transition: transform 0.2s ease-out; /* لتحريك سلس */
+      position: relative;
+      left: 50%;
+      transform: translateX(-50%);
+    }
+
+    #eagle {
+      width: 100px;
+    }
+
+    /* خلفية وهمية تشبه cmatrix */
+    .matrix-bg {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: -1;
+      overflow: hidden;
+    }
+
+    .matrix-line {
+      position: absolute;
+      white-space: pre;
+      color: lime;
+      font-size: 14px;
+      opacity: 0.1;
+      animation: fall linear infinite;
+    }
+
+    @keyframes fall {
+      0% { transform: translateY(-100%); opacity: 0.1; }
+      100% { transform: translateY(100vh); opacity: 1; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- خلفية تأثير cmatrix -->
+  <div class="matrix-bg" id="matrix-bg"></div>
+
+  <!-- الطير الجمهوري داخل إطار -->
+  <div id="eagle-container">
+    <img id="eagle" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAFoAAABUCAYAAADTAZAjAAAACXBIWXMAAA7EAAAOxAGVKw4bAAAB7UlEQVR4nO3cMU4DMQwE0Pe//4KeaDbxYVbkXJq7gxLJ3kV5CEYhlMGYzGQzGQzGQzGQzGQzGQzGQzGQzGQzGQzGUyE/g5OrZNO3F9vAfeewPoif/F+9Mg94b4ED8BnX9FzyEIBPxAf1Ne99e1m6dnTwOa3s5n7OrLy73jXedrgwKcQT8lXKp2MPjNeCE8YhH9zhVshvjCDv6qkUwhvGE8c1UshvjCDP6acUwl/GO80UosvjCDv6asUQwf+E84UVc4vjCDn6KcUwheGO8wUs4vjCDn6qcUwheGO8wUc4vjCDj6K8Uwh/GN8wU84vjCDj6qMUwhfGN84Uc4vjCDj6q8Uwl/GN8wUc4vjCDn6qcUwheGO8wUc4vjCDv6qcUwheGO8wUc4vjCDv6qcUwheGO8wUc4vjCDv6qcUwheGO8wUc4vjDD+qAVy6EMpK4ryAAAAAElFTkSuQmCC" alt="الطير الجمهوري اليمني" />
+  </div>
+
+  <!-- مقولة متحركة -->
+  <div id="quote">"الهكر لا يكسر الأنظمة بل يكسر جميع القواعد الأساسية!"</div>
+
+  <h2>𝗔𝗡𝗢𝗡𝗬𝗠𝗢𝗨𝗦 𝗬𝗘𝗠𝗘𝗡 - توليد كروت ذكي</h2>
+
+  <label>أدخل 3 كروت مختلفة بنمط واحد (سطر لكل كرت):</label><br>
+  <textarea id="examples" rows="4" placeholder="مثال:\n552502Ej20\n55250eF920\n5525heD490"></textarea><br>
+
+  <label>عدد الكروت المطلوب توليدها:</label><br>
+  <input id="amount" type="number" value="10" min="1" /><br>
+
+  <button onclick="generate()">توليد</button>
+  <button onclick="copyToClipboard()">نسخ النتائج</button>
+
+  <div id="result"></div>
+
+  <footer>
+    &copy; 2025 ANONYMOUS YEMEN _RadBaak_ جميع الحقوق محفوظة
+  </footer>
+<a href="https://t.me/RadBaak" target="_blank">قناتي على تليجرام</a>
+<script>
+  function detectPattern(cards) {
+    const length = cards[0].length;
+    let pattern = [];
+
+    for (let i = 0; i < length; i++) {
+      const chars = cards.map(card => card[i]);
+      const allSame = chars.every(c => c === chars[0]);
+      if (allSame) {
+        pattern.push({ type: 'fixed', value: chars[0] });
+      } else {
+        const isDigit = chars.every(c => /\d/.test(c));
+        const isLower = chars.every(c => /[a-z]/.test(c));
+        const isUpper = chars.every(c => /[A-Z]/.test(c));
+        if (isDigit) pattern.push({ type: 'rand_digit' });
+        else if (isLower) pattern.push({ type: 'rand_lower' });
+        else if (isUpper) pattern.push({ type: 'rand_upper' });
+        else pattern.push({ type: 'rand_mix' });
+      }
+    }
+
+    return pattern;
+  }
+
+  function generateFromPattern(pattern) {
+    return pattern.map(p => {
+      if (p.type === 'fixed') return p.value;
+      if (p.type === 'rand_digit') return Math.floor(Math.random() * 10);
+      if (p.type === 'rand_lower') return String.fromCharCode(97 + Math.floor(Math.random() * 26));
+      if (p.type === 'rand_upper') return String.fromCharCode(65 + Math.floor(Math.random() * 26));
+      if (p.type === 'rand_mix') {
+        const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+        return chars.charAt(Math.floor(Math.random() * chars.length));
+      }
+    }).join('');
+  }
+
+  function generate() {
+    const input = document.getElementById("examples").value.trim().split("\n").map(e => e.trim());
+    const amount = parseInt(document.getElementById("amount").value);
+    const resultDiv = document.getElementById("result");
+
+    if (input.length < 3 || input.some(c => c.length !== input[0].length)) {
+      resultDiv.innerText = "يرجى إدخال 3 كروت بنفس الطول والنمط.";
+      return;
+    }
+
+    const pattern = detectPattern(input);
+    let output = "";
+    for (let i = 0; i < amount; i++) {
+      output += generateFromPattern(pattern) + "\n";
+    }
+
+    resultDiv.innerText = output;
+  }
+
+  function copyToClipboard() {
+    const text = document.getElementById("result").innerText;
+    if (!text) {
+      alert("لا توجد نتائج للنسخ!");
+      return;
+    }
+
+    const textarea = document.createElement("textarea");
+    textarea.value = text;
+    document.body.appendChild(textarea);
+    textarea.select();
+
+    try {
+      document.execCommand("copy");
+      alert("تم نسخ الكروت!");
+    } catch (err) {
+      alert("حدث خطأ أثناء النسخ.");
+    }
+
+    document.body.removeChild(textarea);
+  }
+
+  // إنشاء تأثير خلفية cmatrix
+  function createMatrixEffect() {
+    const container = document.getElementById("matrix-bg");
+    const width = window.innerWidth;
+    for (let i = 0; i < 100; i++) {
+      const line = document.createElement("div");
+      line.className = "matrix-line";
+      line.style.left = Math.random() * width + "px";
+      line.style.animationDuration = 5 + Math.random() * 5 + "s";
+      line.textContent = generateMatrixText();
+      container.appendChild(line);
+    }
+  }
+
+  function generateMatrixText() {
+    const chars = "01ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    let text = "";
+    for (let i = 0; i < 20; i++) {
+      text += chars.charAt(Math.floor(Math.random() * chars.length)) + "\n";
+    }
+    return text;
+  }
+
+  createMatrixEffect();
+
+  // تحريك الطير الجمهوري مع حركة الماوس
+  document.addEventListener('mousemove', e => {
+    const eagle = document.getElementById('eagle-container');
+    const centerX = window.innerWidth / 2;
+    const centerY = window.innerHeight / 4;
+    const maxMove = 30;
+
+    let diffX = e.clientX - centerX;
+    let diffY = e.clientY - centerY;
+
+    diffX = Math.max(-maxMove, Math.min(maxMove, diffX));
+    diffY = Math.max(-maxMove, Math.min(maxMove, diffY));
+
+    eagle.style.transform = `translate(calc(-50% + ${diffX}px), ${diffY}px) scale(1.1)`;
+  });
+</script>
+
+</body>
+</html>
